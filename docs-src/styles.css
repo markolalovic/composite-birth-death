@@ -1,0 +1,64 @@
+/* Improve readability of prose-heavy documentation pages. */
+.content {
+  max-width: 900px;
+}
+
+/* Slightly more generous paragraph rhythm. */
+main p {
+  line-height: 1.62;
+}
+
+/* Optional: justify only ordinary prose paragraphs, not code-adjacent UI. */
+main p {
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Add trailing dots to numbered section labels in the left page TOC. */
+#TOC .header-section-number::after {
+  content: ".";
+}
+
+/* Wider, more readable left page TOC. */
+#quarto-margin-sidebar {
+  width: 320px;
+}
+
+/* #TOC {
+  font-size: 5rem;
+} */
+
+#TOC ul {
+  padding-left: 0.85rem;
+}
+
+#TOC li {
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+#TOC a {
+  line-height: 1.35;
+  padding-top: 0.15rem;
+  padding-bottom: 0.15rem;
+}
+
+/* #quarto-margin-sidebar {
+  width: 360px;
+}
+
+.page-columns {
+  grid-template-columns:
+    [screen-start] 1.5em
+    [screen-start-inset] 3fr
+    [page-start] minmax(25px, 50px)
+    [page-start-inset] minmax(50px, 150px)
+    [body-start-outset] 50px
+    [body-start] 760px
+    [body-end] 50px
+    [body-end-outset] minmax(50px, 150px)
+    [page-end-inset] minmax(25px, 50px)
+    [page-end] 3fr
+    [screen-end-inset] 1.5em
+    [screen-end];
+} */

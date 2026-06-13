@@ -1,0 +1,596 @@
+---
+title: "Function documentation"
+number-sections: true
+number-depth: 3
+toc-depth: 1
+---
+
+This page documents the R source files used for simulations, estimators, covariance calculations, and fixed-point algorithms. 
+
+The reproducibility workflow (which script generates which data file and figure) is documented separately in [Reproducibility](workflow/reproducibility.qmd).
+
+# Overview
+Consider a continuous-time birth-death process $(X_t)_{t \ge 0}$ on a finite state space ${0,1, \dots, N}$, where $0$ is an absorbing state. The birth rate from state $k \ge 1$ is composite: several distinct mechanisms contribute additively to a single aggregate intensity,
+$$
+\lambda_k(\boldsymbol\beta) = \sum_{i=1}^K \beta_i f_i(k)
+= \boldsymbol\beta^\top \boldsymbol f(k),
+$$
+with known structural functions $f_i$ and unknown intensities $\beta_i > 0$. Deaths occur at rate $\mu_k = \mu r(k)$ with known death basis function $r$ and unknown parameter $\mu$. 
+
+In the unmarked setting, the process is observed continuously through a single aggregate trajectory, and births are unmarked: an upward jump is observed but not which of the $K$ mechanisms produced it.
+
+Two inferential difficulties follow from this rate structure:
+
+1. **Event-space deconvolution.** The state is one-dimensional, but each birth event is latent. Recovering the individual $\beta_i$ from the aggregate path alone is therefore a deconvolution problem in event space.
+
+2. **Survival selection.** Because $0$ is absorbing, the long trajectories one actually observes are those that have not gone extinct. Treating a surviving path as a draw from the unconditional law produces survival-selection bias.
+
+The framework here addresses both. The conditional likelihood used in the paper handles survival selection through the Doob-$h$ transform and the associated Q-process. The code below implements the running example, extracts sufficient statistics from simulated paths, and compares unconditional estimators, conditional MLEs, QMLEs, Fisher-information covariance estimates, and fixed-point working-score algorithms.
+
+**Example.** Running example is the SIS epidemic on a complete hypergraph or complete simplicial complex. It is an example of a composite birth-death process. Here $X_t = k$ is the number of infected vertices, births are infections, deaths are recoveries, and the two birth mechanisms are pairwise and triadic transmission. The structural functions are
+$$
+f_1(k,N)=k(N-k), \qquad
+f_2(k,N)=\binom{k}{2}(N-k),
+\qquad r(k)=k.
+$$
+The birth parameters are reported in scaled coordinates 
+$$
+b_1 = N\beta_1, \qquad b_2 = N^2\beta_2,
+$$
+so the parameter vector is
+```r
+theta <- c(b1 = ..., b2 = ..., mu = ...)
+```
+
+# Source files
+Source files and what they implement:
+
+| File                      | Purpose                                                                                            | Used for                                                        |
+| ------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `R/01_rates.R`            | Structural functions and birth-death rates                      | All               |
+| `R/02_simulation.R`       | Gillespie simulation of continuously observed sample paths               | Simulated paths, Figure 3   |
+| `R/03_path_statistics.R`  | Sufficient statistics: waiting times and jump counts               | Input to all estimators                                         |
+| `R/generator.R`, `R/pf.R` | Killed generator $Q^{+}$, Perron--Frobenius objects, Doob-$h$ ratios, Q-process invariant distribution | All conditional estimators  |
+| `R/unc_mle.R`             | Naive unconditional MLE for unmarked births                                                        | Figure 4(a) and Figure 7                                              |
+| `R/unc_mle_marked.R`      | Naive unconditional MLE for marked births                                                          | Figure 4(b)                                                     |
+| `R/mle.R`                 | Full conditional MLE for unmarked births, including tilted rates and tilt-derivative score terms   | Figures 5, 7, and 8                                             |
+| `R/mle_marked.R`          | Full conditional MLE for marked births                                                             | Figure 6                                                        |
+| `R/qmle.R`                | Quasi-MLE / working-score estimator for unmarked births                                            | Figure 7                                                        |
+| `R/fisher.R`              | Fisher information, covariance matrix, and standard errors for the full conditional MLE    | Figure 8                                                        |
+| `R/qem.R`                 | Stable Q-EM / fixed-point algorithms for marked and unmarked working-score               | Algorithm checks and diagnostics                                |
+
+
+# Model rates
+The file `R/01_rates.R` defines the structural functions and transition rates for the complete-graph SIS example.
+
+The unscaled birth basis functions `f1_complete(k, N)`, `f2_complete(k, N)` are
+$$
+f_1(k,N)=k(N-k), \qquad f_2(k,N)=\binom{k}{2}(N-k).
+$$
+The scaled basis functions `phi1_complete(k, N)`, `phi2_complete(k, N)` are
+$$
+\phi_1(k,N)=\frac{f_1(k,N)}{N}, \qquad \phi_2(k,N)=\frac{f_2(k,N)}{N^2}.
+$$
+The total birth rate in scaled coordinates `lambda_complete(k, b, N)` is
+$$
+\lambda_k(b) = b_1 \phi_1(k,N) + b_2 \phi_2(k,N),
+$$
+where `b` is a named vector, for example:
+
+```r
+b <- c(b1 = 1.01, b2 = 3.70)
+```
+
+The recovery basis function `r_complete(k)` is $r(k)=k$.
+
+The death or recovery rate `mu_complete(k, mu)` is
+$$
+\mu_k = \mu r(k) = \mu k.
+$$
+
+The total jump rate from state $k$, `total_rate_complete(k, b, mu, N)`, is
+$$
+\lambda_k(b)+\mu_k.
+$$
+This is used by the Gillespie simulator to sample the next event time.
+
+
+# Simulation
+The Gillespie simulation for the complete-graph SIS birth-death process is implemented in `R/02_simulation.R`.
+
+The function `simulate_path(theta, N, I0, time_max)` generates one continuous-time trajectory up to time `time_max`, starting from `I0` infected vertices.
+
+At state $k$, the simulator uses event rates
+$$
+b_1\phi_1(k,N), \qquad b_2\phi_2(k,N), \qquad \mu k.
+$$
+The first two rates correspond to pairwise and triadic births. The third corresponds to recovery.
+
+The output is a data frame with columns:
+
+* `time`: event time;
+* `k`: number of infected vertices after the event;
+* `event_type`: event label;
+* `pre_jump_k`: state immediately before the jump;
+* `jump_type`: `1` for births, `-1` for recoveries, and `0` for non-jump rows.
+
+The possible values of `event_type` are:
+
+* `"initial"`: initial row at time zero;
+* `"PW_birth"`: pairwise birth;
+* `"HO_birth"`: triadic birth;
+* `"Recovery"`: recovery event;
+* `"end"`: terminal row at `time_max`.
+
+The labels `"PW_birth"` and `"HO_birth"` are the birth marks used for marked-birth inference. For unmarked-birth inference, these two event types are combined into a total birth count.
+
+The simulator stops early if the process reaches the absorbing state $k=0$. From state $k=N$, recoveries can still occur.
+
+
+# Path statistics
+The file `R/03_path_statistics.R` computes the sufficient statistics extracted from a simulated path.
+
+The function `compute_sufficient_stats(traj, N)` takes a trajectory returned by `simulate_path()` and returns occupation times and jump counts by pre-jump state.
+
+For each state $k=0,\ldots,N$, it computes the occupation time
+$$
+T_k = \text{total time spent in state } k
+$$
+and jump counts by pre-jump state: 
+\begin{align*}
+U_k &= \text{number of pairwise births from state } k \\[.5em]
+V_k &= \text{number of triadic births from state } k \\[.5em]
+D_k &= \text{number of recoveries from state } k
+\end{align*}
+
+
+The total unmarked birth count is
+$$
+B_k = U_k + V_k.
+$$
+
+The returned object is a list with entries:
+
+* `T_k`: occupation times
+* `U_k`: pairwise birth counts
+* `V_k`: triadic birth counts
+* `D_k`: recovery counts
+* `B_k`: total birth counts
+
+The marked estimators use `U_k` and `V_k` separately. The unmarked estimators use only `B_k`.
+
+
+# Q-process objects
+The files `R/generator.R` and `R/pf.R` construct the killed process and the Doob-$h$ transform.
+
+The function `build_Q_plus_complete(par, N)` builds the killed generator $Q^+$ on states $1,\ldots,N$. Its diagonal entries are
+$$
+Q^{+}_{k,k}=-(\lambda_k+\mu_k).
+$$
+For births,
+$$
+Q^{+}_{k,k+1}=\lambda_k, \qquad k=1,\ldots,N-1.
+$$
+For deaths inside the transient state space,
+$$
+Q^{+}_{k,k-1}=\mu_k, \qquad k=2,\ldots,N.
+$$
+The transition from state $1$ to state $0$ is killed and not included as an off-diagonal entry of $Q^{+}$.
+
+## Perron--Frobenius decomposition: `R/pf.R`
+
+The function `pf_decomp_Qplus(Q_plus)` computes the Perron--Frobenius objects of the killed generator.
+
+It returns:
+
+* `gamma`: maximal real eigenvalue of $Q^+$;
+* `h`: positive right eigenvector;
+* `v`: positive left eigenvector.
+
+The convention is
+$$
+Q^+h=\gamma h, \qquad v^\top Q^+=\gamma v^\top.
+$$
+The vectors are normalized so that
+$$
+\sum_{k=1}^N v_k h_k = 1.
+$$
+
+## Doob-$h$ ratios
+
+The function `compute_R_pm(h)` computes
+$$
+R^{+}(k)=\frac{h(k+1)}{h(k)}, \qquad k=1,\ldots,N-1,
+$$
+and
+$$
+R^{-}(k)=\frac{h(k-1)}{h(k)}, \qquad k=1,\ldots,N.
+$$
+
+We have $h(0) = 0$, so $R^{-}(1) = 0$. The value $R^{+}(N)$ is undefined, since births from state $N$ are impossible.
+
+## Q-process invariant distribution
+
+The function `compute_pi(v, h)` computes the invariant distribution of the Q-process, $\pi_k = v_kh_k$.
+
+
+# Unmarked unconditional MLE
+The file `R/unc_mle.R` computes the naive unconditional MLE when birth marks are not used.
+
+The function `fit_unc_mle_complete(stats, N, init)` uses the sufficient statistics $T_k$, $B_k$, and $D_k$, where $B_k=U_k+V_k$ is the total number of births from state $k$.
+
+The unconditional birth intensity is
+$$
+\lambda_k(b)=b_1\phi_1(k,N)+b_2\phi_2(k,N).
+$$
+Since $b_1$ and $b_2$ are coupled inside $\lambda_k(b)$, the birth part is optimized numerically.
+
+The recovery parameter has the closed-form estimate
+$$
+\widehat\mu = \frac{\sum_{k=1}^{N}D_k}
+{\sum_{k=1}^{N}T_k k}.
+$$
+
+The main functions are:
+
+* `mu_hat_unc_complete(stats, N)`: closed-form estimate of $\mu$;
+* `loglik_unc_complete(par, stats, N)`: unconditional log-likelihood;
+* `score_unc_complete(par, stats, N)`: unconditional score;
+* `fit_unc_mle_complete(stats, N, init)`: unconditional MLE.
+
+The fit returns `par_hat`, `loglik`, `score`, `convergence`, and the raw `optim` object. This estimator is “naive” because it treats the observed path as drawn from the unconditional law.
+
+
+# Marked unconditional MLE
+The file `R/unc_mle_marked.R` computes the naive unconditional MLE when birth marks are observed.
+
+The function `fit_unc_mle_marked_complete(stats, N)` uses $T_k$, $U_k$, $V_k$, and $D_k$. Since the birth mechanism is observed, the unconditional likelihood separates by mechanism:
+$$
+\widehat b_1 =
+\frac{\sum_{k=1}^{N-1} U_k}
+{\sum_{k=1}^{N-1} T_k\phi_1(k,N)},
+$$
+$$
+\widehat b_2= 
+\frac{\sum_{k=1}^{N-1} V_k}
+{\sum_{k=1}^{N-1} T_k\phi_2(k,N)},
+$$
+and
+$$
+\widehat\mu =
+\frac{\sum_{k=1}^{N} D_k}
+{\sum_{k=1}^{N} T_k k}.
+$$
+
+The function returns `par_hat = c(b1 = ..., b2 = ..., mu = ...)`.
+
+
+# Conditional MLE for unmarked births
+The file `R/mle.R` implements the full conditional MLE for unmarked births.
+
+The conditional likelihood is written using Q-process tilted rates. If $h$ is the Perron--Frobenius right eigenvector of the killed generator $Q^+$, define
+$$
+R^{+}(k)=\frac{h(k+1)}{h(k)}, \qquad R^{-}(k)=\frac{h(k-1)}{h(k)}.
+$$
+The tilted birth and death rates are
+$$
+\widetilde\lambda_k=\lambda_k(b)R^{+}(k), \qquad
+\widetilde\mu_k=\mu k R^{-}(k).
+$$
+
+For unmarked births, the likelihood uses the total birth count
+$$
+B_k=U_k+V_k.
+$$
+
+## Tilt objects
+
+The function `compute_log_R_pm_complete(par, N)` computes the Perron--Frobenius objects and the log tilt ratios
+$$
+\log R^{+}(k), \qquad \log R^{-}(k).
+$$
+
+The function `compute_tilted_rates_complete(par, N)` computes the base and tilted rates, including:
+
+* `R_plus`, `R_minus`;
+* `lambda_base`, `mu_base`;
+* `lambda_tilde`, `mu_tilde`.
+
+The function `grad_log_R_num_complete(par, N, eps)` computes numerical derivatives of the log tilt factors,
+$$
+\nabla_\theta \log R^{+}(k), \qquad
+\nabla_\theta \log R^{-}(k),
+$$
+using centred finite differences.
+
+## Conditional log-likelihood
+
+The function `loglik_mle_complete(par, stats, N)` evaluates
+$$
+\ell_T(\theta) =
+\sum_{k=1}^{N-1}
+\left[
+B_k\log\widetilde\lambda_k - T_k\widetilde\lambda_k
+\right]
++
+\sum_{k=2}^{N}
+\left[
+D_k\log\widetilde\mu_k - T_k\widetilde\mu_k
+\right].
+$$
+The death sum starts at $k=2$ because under the Q-process the transition from 1 to 0 is removed.
+
+## Conditional score
+
+The function `score_mle_complete(par, stats, N, eps)` evaluates the full conditional score.
+
+Unlike the QMLE working score, this score includes the tilt sensitivity terms
+$$
+\nabla_\theta \log R^{+}(k), \qquad
+\nabla_\theta \log R^{-}(k).
+$$
+
+## MLE fit
+
+The function `fit_mle_complete(stats, N, init)` computes the full conditional MLE by numerical optimization of `loglik_mle_complete()`.
+
+The fit returns `par_hat`, `loglik`, `score`, `convergence`, and the raw `optim` object.
+
+
+# Conditional MLE for marked births
+The file `R/mle_marked.R` implements the full conditional MLE when birth marks are observed. The marked likelihood uses the separate birth counts
+$$
+U_k = \text{number of pairwise births from state } k,
+$$
+and
+$$
+V_k = \text{number of triadic births from state } k.
+$$
+
+Under the Q-process, the marked tilted birth rates are
+$$
+\widetilde\lambda_{1,k}=
+b_1\phi_1(k,N)R^{+}(k),
+\qquad
+\widetilde\lambda_{2,k}=
+b_2\phi_2(k,N)R^{+}(k),
+$$
+and the tilted death rate is
+$$
+\widetilde\mu_k=\mu k R^{-}(k).
+$$
+
+The functions in this file reuse the Q-process objects and numerical tilt derivatives from `R/mle.R`.
+
+## Conditional log-likelihood
+
+The function `loglik_mle_marked_complete(par, stats, N)` evaluates
+$$
+\ell_T(\theta)=
+\sum_{k=1}^{N-1}
+\left[
+U_k\log\widetilde\lambda_{1,k} - T_k\widetilde\lambda_{1,k}
+\right]
++
+\sum_{k=1}^{N-1}
+\left[
+V_k\log\widetilde\lambda_{2,k} - T_k\widetilde\lambda_{2,k}
+\right]
++
+\sum_{k=2}^{N}
+\left[
+D_k\log\widetilde\mu_k - T_k\widetilde\mu_k
+\right].
+$$
+
+## Conditional score
+
+The function `score_mle_marked_complete(par, stats, N, eps)` evaluates the full marked conditional score.
+
+The score includes the numerical derivatives of the tilt factors,
+$$
+\nabla_\theta \log R^{+}(k), \qquad
+\nabla_\theta \log R^{-}(k).
+$$
+Thus this is the full marked conditional score, not the fixed-tilt working score implemented in `R/qem.R`.
+
+## MLE fit
+
+The function `fit_mle_marked_complete(stats, N, init)` computes the marked conditional MLE by numerical optimization of `loglik_mle_marked_complete()`. The fit returns `par_hat`, `loglik`, `score`, `convergence`, and the raw `optim` object.
+
+
+# QMLE for unmarked births
+The file `R/qmle.R` implements the quasi-MLE for unmarked births.
+
+The QMLE is based on the Q-process likelihood, but uses a working score that treats the Doob-$h$ tilt factors as fixed. Equivalently, it ignores
+$$
+\nabla_\theta \log R^{+}(k), \qquad
+\nabla_\theta \log R^{-}(k).
+$$
+
+The tilted rates still appear in the compensator terms, so the QMLE is not the same as the naive unconditional MLE.
+
+For unmarked births, the observed birth count is $B_k=U_k+V_k$. The working birth score uses
+$$
+\frac{\partial}{\partial b_1}\log\lambda_k(b)=
+\frac{\phi_1(k,N)}{\lambda_k(b)},
+\qquad
+\frac{\partial}{\partial b_2}\log\lambda_k(b)=
+\frac{\phi_2(k,N)}{\lambda_k(b)}.
+$$
+
+## Working score
+
+The function `score_qmle_complete(par, stats, N)` evaluates the QMLE working score. It uses $T_k$, $B_k$, and $D_k$, and recomputes the Q-process tilt factors at the current parameter value.
+
+## Numerical Jacobian
+
+The function `jacobian_beta_qmle_complete(par, stats, N, eps)` computes a numerical Jacobian for the birth-score block in $(b_1,b_2)$. This is used by the block-Newton iteration in `fit_qmle_complete()`.
+
+## Score norm
+
+The function `qmle_score_norm_complete(par, stats, N)` computes the squared norm of the working score. It is used for diagnostics.
+
+## QMLE fit
+
+The function `fit_qmle_complete(stats, N, init)` computes the QMLE by iterating:
+
+1. evaluate the working score
+2. update $(b_1,b_2)$ by a Newton step using the numerical Jacobian
+3. update $\mu$ in closed form with the current tilt factor $R^{-}$
+4. recompute the tilt at the new parameter value
+
+The fit returns `par_hat`, `score`, `converged`, `iterations`, and `trace`.
+
+
+# Fisher information and covariance: 
+The file `R/fisher.R` computes Fisher information and covariance estimates for the full conditional MLE.
+
+It is used to compute the Fisher-information-based standard error of the unconstrained conditional MLE of $b_2$.
+
+## Score weights
+
+The function `compute_full_score_weights_complete(par, N, eps)` computes the full score weights for births and deaths.
+
+For births, the weights are stored in `G_plus`. For deaths, they are stored in `G_minus`. These weights include the tilt sensitivity terms
+$$
+\nabla_\theta \log R^{+}(k), \qquad
+\nabla_\theta \log R^{-}(k).
+$$
+Thus these are score weights for the full conditional MLE, not for the QMLE working score.
+
+## Fisher information
+
+The function `compute_fisher_complete(par, N, eps)` computes the Fisher information matrix
+$$
+\mathcal I(\theta) =
+\sum_{k=1}^{N-1}
+\pi_k \widetilde\lambda_k
+G^{+}_k(G^{+}_k)^\top 
++
+\sum_{k=2}^{N}
+\pi_k \widetilde\mu_k
+G^{-}_k(G^{-}_k)^\top.
+$$
+Here $\pi_k$ is the invariant distribution of the Q-process, and
+$$
+\widetilde\lambda_k=\lambda_k(b)R^{+}(k),
+\qquad
+\widetilde\mu_k=\mu k R^{-}(k).
+$$
+
+The matrix is symmetrized before being returned.
+
+## Covariance matrix
+
+The function `vcov_mle_complete(par_hat, stats, N, eps, ridge)` computes
+$$
+\widehat{\mathrm{Var}}(\widehat\theta) =
+\frac{1}{T_{\mathrm{obs}}}
+\widehat{\mathcal I}(\widehat\theta)^{-1},
+$$
+where
+$$
+T_{\mathrm{obs}}=\sum_{k=0}^N T_k.
+$$
+
+It returns:
+
+* `vcov`: estimated covariance matrix;
+* `fisher`: Fisher information matrix.
+
+The argument `ridge` adds a small diagonal ridge before inversion.
+
+## Standard errors
+
+The function `se_mle_complete(par_hat, stats, N, eps, ridge)` returns the square roots of the diagonal entries of the covariance matrix.
+
+For the boundary test, the relevant standard error is
+$$
+\widehat{\mathrm{se}}(\widehat b_2) =
+\sqrt{\widehat{\mathrm{Var}}(\widehat b_2)}.
+$$
+
+# Q-EM and working-score algorithms
+
+The file `R/qem.R` implements stable fixed-point algorithms suggested by the Q-process likelihood.
+
+This is an EM-type algorithm for the working-score problem, not for the full conditional likelihood. In the full likelihood, the tilt factors depend on the parameter vector, and their derivatives contribute to the exact score. The Q-EM algorithms ignore these sensitivity terms during each update and recompute the tilt at the next iterate.
+
+The function `compute_q_tilt_complete(par, N)` computes the current Doob-$h$ tilt factors $R^{+}(k)$ and $R^{-}(k)$.
+
+## Marked births
+
+The function `fit_qem_marked_complete(stats, N, init, max_iter, tol)` implements the fixed-point algorithm when birth marks are observed.
+
+At iteration $m$, the algorithm computes the current tilt factors from
+$$
+\theta^{(m)}=(b_1^{(m)},b_2^{(m)},\mu^{(m)}).
+$$
+It then updates
+$$
+b_1^{(m+1)} =
+\frac{\sum_{k=1}^{N-1} U_k}
+{\sum_{k=1}^{N-1}T_k\phi_1(k,N)R^{+,(m)}(k)},
+$$
+$$
+b_2^{(m+1)} =
+\frac{\sum_{k=1}^{N-1} V_k}
+{\sum_{k=1}^{N-1}T_k\phi_2(k,N)R^{+,(m)}(k)},
+$$
+and
+$$
+\mu^{(m+1)} =
+\frac{\sum_{k=2}^{N} D_k}
+{\sum_{k=2}^{N}T_k r(k)R^{-,(m)}(k)}.
+$$
+
+Algorithm repeats these steps until the stopping criterion is met or the maximum number of iterations is reached.
+
+## Unmarked births
+
+The function `fit_qem_unmarked_complete(stats, N, init, max_iter, tol)` implements the fixed-point algorithm when birth marks are unobserved.
+
+Only birth count $B_k= U_k + V_k$ is observed. At iteration $m$, the algorithm imputes the expected split of using the current birth parameters. 
+
+The conditional probabilities in E-step are
+$$
+\begin{align*}
+p_1^{(m)}(k) &= 
+\frac{b_1^{(m)}\phi_1(k)}
+{b_1^{(m)}\phi_1(k)+b_2^{(m)}\phi_2(k)}, \\[2em]
+p_2^{(m)}(k) &= 
+\frac{b_2^{(m)}\phi_2(k)}
+{b_1^{(m)}\phi_1(k)+b_2^{(m)}\phi_2(k)}.
+\end{align*}
+$$
+
+The common Doob-transform factor $R^+(k)$ cancels in these ratios, since it multiplies every birth mechanism at the same state. Thus the E-step does not involve the tilt factor. The imputed total birth counts are
+$$
+\widehat U^{(m)} = \sum_{k=1}^{N-1} B_k p_1^{(m)}(k), \qquad
+\widehat V^{(m)} = \sum_{k=1}^{N-1} B_k p_2^{(m)}(k).
+$$
+
+The M-step uses the tilted exposure denominators. After computing the current tilt factors $R^{+,(m)}$ and $R^{-,(m)}$, the updates are
+$$
+b_1^{(m+1)} =
+\frac{\widehat U^{(m)}}
+{\sum_{k=1}^{N-1} T_k \phi_1(k) R^{+,(m)}(k)},
+$$
+
+$$
+b_2^{(m+1)} =
+\frac{\widehat V^{(m)}}
+{\sum_{k=1}^{N-1} T_k \phi_2(k) R^{+,(m)}(k)},
+$$
+
+and
+$$
+\mu^{(m+1)} =
+\frac{\sum_{k=2}^{N} D_k}
+{\sum_{k=2}^{N} T_k k R^{-,(m)}(k)}.
+$$
+
+The unmarked map converges more slowly than the marked one, because the imputation probabilities $p_1^{(m)},p_2^{(m)}$ depend on the current parameters and so feed back into each iterate.
+
+The script `scripts/check_qem_estimators.R` compares the Q-EM fixed-point estimates with the QMLE and conditional MLE estimates.

@@ -1,0 +1,27 @@
+project:
+  type: website
+  output-dir: ../docs
+
+website:
+  title: "composite-birth-death"
+  site-url: https://markolalovic.github.io/composite-birth-death/
+  repo-url: https://github.com/markolalovic/composite-birth-death/
+  search: true
+  navbar:
+    pinned: true  
+    left:
+      - href: index.qmd
+        text: Functions
+      - href: workflow/reproducibility.qmd
+        text: Reproducibility
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-location: left
+    toc-depth: 1
+    toc-expand: 1
+    number-sections: true
+    number-depth: 1
+    css: styles.css

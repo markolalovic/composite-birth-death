@@ -1,0 +1,224 @@
+---
+title: "Reproducibility workflow"
+number-sections: true
+number-depth: 0
+toc-depth: 1
+---
+
+This page describes how to regenerate the simulated sufficient statistics, estimates, and figures used in the running example.
+
+# Overview
+
+R version 4.5.2 was used. The only non-base package required is `dplyr` (version 1.2.1 was used):
+
+```r
+install.packages("dplyr")
+```
+
+The scripts also use the base package `parallel`. Plotting uses base R graphics only.
+
+The workflow for reproducing Figures 3-8 is:
+
+1. simulate surviving trajectories and save sufficient statistics in `data/simulated/`
+2. calculate estimates from these statistics and save CSV files in `data/`
+3. generate figures from CSV files and save them in PDF in `figures/`
+
+The repository includes precomputed sufficient statistics in `data/simulated/`. To regenerate them, run:
+```bash
+Rscript scripts/precompute_surviving_stats.R
+```
+
+To rerun the full workflow: regenerating simulated data, recalculating estimates, and recreating the figures, you can run shell script:
+```bash
+./reproduce_figures.sh
+```
+
+How to reproduce individual figures is described below.
+
+
+# Figure 3: surviving trajectory
+Run:
+```bash
+Rscript scripts/fig03_single_trajectory.R
+```
+
+Output:
+```text
+figures/single_trajectory_base.pdf
+```
+
+This script simulates the SIS process on a complete hypergraph / complete simplicial complex with
+$$
+N=100, \qquad X_0=10, \qquad T=100,
+$$
+and
+$$
+b_1=1.01, \qquad b_2=3.70, \qquad \mu=1.
+$$
+
+It repeatedly simulates trajectories until one survives up to time $T=100$, then plots the infected count over time.
+
+
+# Figure 4: unconditional MLEs
+Figure 4 uses $200$ trajectories conditioned to survive up to time $T=1000$.
+
+Required sufficient statistics:
+```text
+data/simulated/stats_baseline_T1000_M200.rds
+```
+
+Compute estimates:
+```bash
+Rscript scripts/compare_estimators_parallel.R
+Rscript scripts/test_unc_mle_marked.R
+```
+
+Outputs:
+```text
+data/comparison_estimators_1000.csv
+data/comparison_estimators_marked_1000.csv
+```
+
+Plot:
+```bash
+Rscript scripts/fig04_plot_unconditional_mle.R
+```
+
+Outputs:
+```text
+figures/unconditional_mle_1000.pdf
+figures/unconditional_mle_marked_1000.pdf
+```
+
+The unmarked panel uses total birth counts $B_k = U_k + V_k$. The marked panel uses $U_k$ and $V_k$ separately.
+
+
+# Figures 5 and 6: conditional MLEs
+Figures 5 and 6 use $200$ trajectories conditioned to survive up to times $T=200,500,1000$.
+
+Required sufficient statistics:
+```text
+data/simulated/stats_baseline_T200_M200.rds
+data/simulated/stats_baseline_T500_M200.rds
+data/simulated/stats_baseline_T1000_M200.rds
+```
+
+Compute estimates:
+```bash
+Rscript scripts/compare_estimators_parallel.R
+Rscript scripts/validate_mle_marked_parallel.R
+```
+
+Outputs:
+```text
+data/comparison_estimators_200.csv
+data/comparison_estimators_500.csv
+data/comparison_estimators_1000.csv
+
+data/estimates_mle_marked_200.csv
+data/estimates_mle_marked_500.csv
+data/estimates_mle_marked_1000.csv
+```
+
+The `comparison_estimators_{T}.csv` files contain the unmarked conditional MLE columns `b1_mle`, `b2_mle`, and `mu_mle`. The `estimates_mle_marked_{T}.csv` files contain the corresponding marked estimates.
+
+Plot:
+```bash
+Rscript scripts/fig05-06_plot_mle_consistency_panels.R
+```
+
+Outputs:
+```text
+figures/mle_consistency_unmarked_200.pdf
+figures/mle_consistency_unmarked_500.pdf
+figures/mle_consistency_unmarked_1000.pdf
+
+figures/mle_consistency_marked_200.pdf
+figures/mle_consistency_marked_500.pdf
+figures/mle_consistency_marked_1000.pdf
+```
+
+
+# Figure 7: estimator comparison
+Figure 7 uses $200$ trajectories conditioned to survive up to times $T=100,200,\dots,1000$.
+
+Required sufficient statistics:
+```text
+data/simulated/stats_baseline_T100_M200.rds
+...
+data/simulated/stats_baseline_T1000_M200.rds
+```
+
+Compute estimates:
+```bash
+Rscript scripts/compare_estimators_parallel.R
+```
+
+Outputs:
+```text
+data/comparison_estimators_100.csv
+...
+data/comparison_estimators_1000.csv
+```
+
+Files contain the unconditional MLE, conditional MLE, and QMLE columns:
+```text
+b1_unc,  b2_unc,  mu_unc
+b1_mle,  b2_mle,  mu_mle
+b1_qmle, b2_qmle, mu_qmle
+```
+
+Plot:
+```bash
+Rscript scripts/fig07_plot_compare_estimators.R
+```
+
+Outputs:
+```text
+figures/comparison_estimator_means_a.pdf
+figures/comparison_estimator_means_b.pdf
+```
+
+
+# Figure 8: boundary test
+Figure 8 uses $1000$ trajectories generated under the null hypothesis $H_0:b_2=0$, conditioned to survive up to time $T=1000$.
+
+The null parameter vector is
+$$
+b_1=2.875, \qquad b_2=0, \qquad \mu=1.
+$$
+
+Required sufficient statistics:
+```text
+data/simulated/stats_null_T1000_M1000.rds
+```
+
+Compute the boundary-test statistics:
+```bash
+Rscript scripts/boundary_test_MLE_parallel.R
+```
+
+Output:
+```text
+data/boundary_test_MLE.csv
+```
+
+Output file contains the unconstrained conditional MLE, the Fisher-information-based standard error for `b2`, and the standardized statistic `Z_b2`.
+
+Plot:
+```bash
+Rscript scripts/fig08_plot_boundary_testing.R
+```
+
+Output:
+```text
+figures/boundary_testing.pdf
+```
+
+The plotted statistic is
+$$
+Z_{2,T} = \frac{\widehat b_2}{\widehat{\mathrm{se}}(\widehat b_2)}.
+$$
+
+
+

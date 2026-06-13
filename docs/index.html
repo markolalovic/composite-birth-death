@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Function documentation – composite-birth-death</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-158031087360bce0ff56dc785ce39e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">composite-birth-death</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Functions</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./workflow/reproducibility.html"> 
+<span class="menu-text">Reproducibility</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="1">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
+  <li><a href="#source-files" id="toc-source-files" class="nav-link" data-scroll-target="#source-files"><span class="header-section-number">2</span> Source files</a></li>
+  <li><a href="#model-rates" id="toc-model-rates" class="nav-link" data-scroll-target="#model-rates"><span class="header-section-number">3</span> Model rates</a></li>
+  <li><a href="#simulation" id="toc-simulation" class="nav-link" data-scroll-target="#simulation"><span class="header-section-number">4</span> Simulation</a></li>
+  <li><a href="#path-statistics" id="toc-path-statistics" class="nav-link" data-scroll-target="#path-statistics"><span class="header-section-number">5</span> Path statistics</a></li>
+  <li><a href="#q-process-objects" id="toc-q-process-objects" class="nav-link" data-scroll-target="#q-process-objects"><span class="header-section-number">6</span> Q-process objects</a></li>
+  <li><a href="#unmarked-unconditional-mle" id="toc-unmarked-unconditional-mle" class="nav-link" data-scroll-target="#unmarked-unconditional-mle"><span class="header-section-number">7</span> Unmarked unconditional MLE</a></li>
+  <li><a href="#marked-unconditional-mle" id="toc-marked-unconditional-mle" class="nav-link" data-scroll-target="#marked-unconditional-mle"><span class="header-section-number">8</span> Marked unconditional MLE</a></li>
+  <li><a href="#conditional-mle-for-unmarked-births" id="toc-conditional-mle-for-unmarked-births" class="nav-link" data-scroll-target="#conditional-mle-for-unmarked-births"><span class="header-section-number">9</span> Conditional MLE for unmarked births</a></li>
+  <li><a href="#conditional-mle-for-marked-births" id="toc-conditional-mle-for-marked-births" class="nav-link" data-scroll-target="#conditional-mle-for-marked-births"><span class="header-section-number">10</span> Conditional MLE for marked births</a></li>
+  <li><a href="#qmle-for-unmarked-births" id="toc-qmle-for-unmarked-births" class="nav-link" data-scroll-target="#qmle-for-unmarked-births"><span class="header-section-number">11</span> QMLE for unmarked births</a></li>
+  <li><a href="#fisher-information-and-covariance" id="toc-fisher-information-and-covariance" class="nav-link" data-scroll-target="#fisher-information-and-covariance"><span class="header-section-number">12</span> Fisher information and covariance:</a></li>
+  <li><a href="#q-em-and-working-score-algorithms" id="toc-q-em-and-working-score-algorithms" class="nav-link" data-scroll-target="#q-em-and-working-score-algorithms"><span class="header-section-number">13</span> Q-EM and working-score algorithms</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Function documentation</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This page documents the R source files used for simulations, estimators, covariance calculations, and fixed-point algorithms.</p>
+<p>The reproducibility workflow (which script generates which data file and figure) is documented separately in <a href="./workflow/reproducibility.html">Reproducibility</a>.</p>
+<section id="overview" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
+<p>Consider a continuous-time birth-death process <span class="math inline">\((X_t)_{t \ge 0}\)</span> on a finite state space <span class="math inline">\({0,1, \dots, N}\)</span>, where <span class="math inline">\(0\)</span> is an absorbing state. The birth rate from state <span class="math inline">\(k \ge 1\)</span> is composite: several distinct mechanisms contribute additively to a single aggregate intensity, <span class="math display">\[
+\lambda_k(\boldsymbol\beta) = \sum_{i=1}^K \beta_i f_i(k)
+= \boldsymbol\beta^\top \boldsymbol f(k),
+\]</span> with known structural functions <span class="math inline">\(f_i\)</span> and unknown intensities <span class="math inline">\(\beta_i &gt; 0\)</span>. Deaths occur at rate <span class="math inline">\(\mu_k = \mu r(k)\)</span> with known death basis function <span class="math inline">\(r\)</span> and unknown parameter <span class="math inline">\(\mu\)</span>.</p>
+<p>In the unmarked setting, the process is observed continuously through a single aggregate trajectory, and births are unmarked: an upward jump is observed but not which of the <span class="math inline">\(K\)</span> mechanisms produced it.</p>
+<p>Two inferential difficulties follow from this rate structure:</p>
+<ol type="1">
+<li><p><strong>Event-space deconvolution.</strong> The state is one-dimensional, but each birth event is latent. Recovering the individual <span class="math inline">\(\beta_i\)</span> from the aggregate path alone is therefore a deconvolution problem in event space.</p></li>
+<li><p><strong>Survival selection.</strong> Because <span class="math inline">\(0\)</span> is absorbing, the long trajectories one actually observes are those that have not gone extinct. Treating a surviving path as a draw from the unconditional law produces survival-selection bias.</p></li>
+</ol>
+<p>The framework here addresses both. The conditional likelihood used in the paper handles survival selection through the Doob-<span class="math inline">\(h\)</span> transform and the associated Q-process. The code below implements the running example, extracts sufficient statistics from simulated paths, and compares unconditional estimators, conditional MLEs, QMLEs, Fisher-information covariance estimates, and fixed-point working-score algorithms.</p>
+<p><strong>Example.</strong> Running example is the SIS epidemic on a complete hypergraph or complete simplicial complex. It is an example of a composite birth-death process. Here <span class="math inline">\(X_t = k\)</span> is the number of infected vertices, births are infections, deaths are recoveries, and the two birth mechanisms are pairwise and triadic transmission. The structural functions are <span class="math display">\[
+f_1(k,N)=k(N-k), \qquad
+f_2(k,N)=\binom{k}{2}(N-k),
+\qquad r(k)=k.
+\]</span> The birth parameters are reported in scaled coordinates <span class="math display">\[
+b_1 = N\beta_1, \qquad b_2 = N^2\beta_2,
+\]</span> so the parameter vector is</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">b1 =</span> ..., <span class="at">b2 =</span> ..., <span class="at">mu =</span> ...)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="source-files" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Source files</h1>
+<p>Source files and what they implement:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 52%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Purpose</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>R/01_rates.R</code></td>
+<td>Structural functions and birth-death rates</td>
+<td>All</td>
+</tr>
+<tr class="even">
+<td><code>R/02_simulation.R</code></td>
+<td>Gillespie simulation of continuously observed sample paths</td>
+<td>Simulated paths, Figure 3</td>
+</tr>
+<tr class="odd">
+<td><code>R/03_path_statistics.R</code></td>
+<td>Sufficient statistics: waiting times and jump counts</td>
+<td>Input to all estimators</td>
+</tr>
+<tr class="even">
+<td><code>R/generator.R</code>, <code>R/pf.R</code></td>
+<td>Killed generator <span class="math inline">\(Q^{+}\)</span>, Perron–Frobenius objects, Doob-<span class="math inline">\(h\)</span> ratios, Q-process invariant distribution</td>
+<td>All conditional estimators</td>
+</tr>
+<tr class="odd">
+<td><code>R/unc_mle.R</code></td>
+<td>Naive unconditional MLE for unmarked births</td>
+<td>Figure 4(a) and Figure 7</td>
+</tr>
+<tr class="even">
+<td><code>R/unc_mle_marked.R</code></td>
+<td>Naive unconditional MLE for marked births</td>
+<td>Figure 4(b)</td>
+</tr>
+<tr class="odd">
+<td><code>R/mle.R</code></td>
+<td>Full conditional MLE for unmarked births, including tilted rates and tilt-derivative score terms</td>
+<td>Figures 5, 7, and 8</td>
+</tr>
+<tr class="even">
+<td><code>R/mle_marked.R</code></td>
+<td>Full conditional MLE for marked births</td>
+<td>Figure 6</td>
+</tr>
+<tr class="odd">
+<td><code>R/qmle.R</code></td>
+<td>Quasi-MLE / working-score estimator for unmarked births</td>
+<td>Figure 7</td>
+</tr>
+<tr class="even">
+<td><code>R/fisher.R</code></td>
+<td>Fisher information, covariance matrix, and standard errors for the full conditional MLE</td>
+<td>Figure 8</td>
+</tr>
+<tr class="odd">
+<td><code>R/qem.R</code></td>
+<td>Stable Q-EM / fixed-point algorithms for marked and unmarked working-score</td>
+<td>Algorithm checks and diagnostics</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="model-rates" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Model rates</h1>
+<p>The file <code>R/01_rates.R</code> defines the structural functions and transition rates for the complete-graph SIS example.</p>
+<p>The unscaled birth basis functions <code>f1_complete(k, N)</code>, <code>f2_complete(k, N)</code> are <span class="math display">\[
+f_1(k,N)=k(N-k), \qquad f_2(k,N)=\binom{k}{2}(N-k).
+\]</span> The scaled basis functions <code>phi1_complete(k, N)</code>, <code>phi2_complete(k, N)</code> are <span class="math display">\[
+\phi_1(k,N)=\frac{f_1(k,N)}{N}, \qquad \phi_2(k,N)=\frac{f_2(k,N)}{N^2}.
+\]</span> The total birth rate in scaled coordinates <code>lambda_complete(k, b, N)</code> is <span class="math display">\[
+\lambda_k(b) = b_1 \phi_1(k,N) + b_2 \phi_2(k,N),
+\]</span> where <code>b</code> is a named vector, for example:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">b1 =</span> <span class="fl">1.01</span>, <span class="at">b2 =</span> <span class="fl">3.70</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The recovery basis function <code>r_complete(k)</code> is <span class="math inline">\(r(k)=k\)</span>.</p>
+<p>The death or recovery rate <code>mu_complete(k, mu)</code> is <span class="math display">\[
+\mu_k = \mu r(k) = \mu k.
+\]</span></p>
+<p>The total jump rate from state <span class="math inline">\(k\)</span>, <code>total_rate_complete(k, b, mu, N)</code>, is <span class="math display">\[
+\lambda_k(b)+\mu_k.
+\]</span> This is used by the Gillespie simulator to sample the next event time.</p>
+</section>
+<section id="simulation" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Simulation</h1>
+<p>The Gillespie simulation for the complete-graph SIS birth-death process is implemented in <code>R/02_simulation.R</code>.</p>
+<p>The function <code>simulate_path(theta, N, I0, time_max)</code> generates one continuous-time trajectory up to time <code>time_max</code>, starting from <code>I0</code> infected vertices.</p>
+<p>At state <span class="math inline">\(k\)</span>, the simulator uses event rates <span class="math display">\[
+b_1\phi_1(k,N), \qquad b_2\phi_2(k,N), \qquad \mu k.
+\]</span> The first two rates correspond to pairwise and triadic births. The third corresponds to recovery.</p>
+<p>The output is a data frame with columns:</p>
+<ul>
+<li><code>time</code>: event time;</li>
+<li><code>k</code>: number of infected vertices after the event;</li>
+<li><code>event_type</code>: event label;</li>
+<li><code>pre_jump_k</code>: state immediately before the jump;</li>
+<li><code>jump_type</code>: <code>1</code> for births, <code>-1</code> for recoveries, and <code>0</code> for non-jump rows.</li>
+</ul>
+<p>The possible values of <code>event_type</code> are:</p>
+<ul>
+<li><code>"initial"</code>: initial row at time zero;</li>
+<li><code>"PW_birth"</code>: pairwise birth;</li>
+<li><code>"HO_birth"</code>: triadic birth;</li>
+<li><code>"Recovery"</code>: recovery event;</li>
+<li><code>"end"</code>: terminal row at <code>time_max</code>.</li>
+</ul>
+<p>The labels <code>"PW_birth"</code> and <code>"HO_birth"</code> are the birth marks used for marked-birth inference. For unmarked-birth inference, these two event types are combined into a total birth count.</p>
+<p>The simulator stops early if the process reaches the absorbing state <span class="math inline">\(k=0\)</span>. From state <span class="math inline">\(k=N\)</span>, recoveries can still occur.</p>
+</section>
+<section id="path-statistics" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Path statistics</h1>
+<p>The file <code>R/03_path_statistics.R</code> computes the sufficient statistics extracted from a simulated path.</p>
+<p>The function <code>compute_sufficient_stats(traj, N)</code> takes a trajectory returned by <code>simulate_path()</code> and returns occupation times and jump counts by pre-jump state.</p>
+<p>For each state <span class="math inline">\(k=0,\ldots,N\)</span>, it computes the occupation time <span class="math display">\[
+T_k = \text{total time spent in state } k
+\]</span> and jump counts by pre-jump state: <span class="math display">\[\begin{align*}
+U_k &amp;= \text{number of pairwise births from state } k \\[.5em]
+V_k &amp;= \text{number of triadic births from state } k \\[.5em]
+D_k &amp;= \text{number of recoveries from state } k
+\end{align*}\]</span></p>
+<p>The total unmarked birth count is <span class="math display">\[
+B_k = U_k + V_k.
+\]</span></p>
+<p>The returned object is a list with entries:</p>
+<ul>
+<li><code>T_k</code>: occupation times</li>
+<li><code>U_k</code>: pairwise birth counts</li>
+<li><code>V_k</code>: triadic birth counts</li>
+<li><code>D_k</code>: recovery counts</li>
+<li><code>B_k</code>: total birth counts</li>
+</ul>
+<p>The marked estimators use <code>U_k</code> and <code>V_k</code> separately. The unmarked estimators use only <code>B_k</code>.</p>
+</section>
+<section id="q-process-objects" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Q-process objects</h1>
+<p>The files <code>R/generator.R</code> and <code>R/pf.R</code> construct the killed process and the Doob-<span class="math inline">\(h\)</span> transform.</p>
+<p>The function <code>build_Q_plus_complete(par, N)</code> builds the killed generator <span class="math inline">\(Q^+\)</span> on states <span class="math inline">\(1,\ldots,N\)</span>. Its diagonal entries are <span class="math display">\[
+Q^{+}_{k,k}=-(\lambda_k+\mu_k).
+\]</span> For births, <span class="math display">\[
+Q^{+}_{k,k+1}=\lambda_k, \qquad k=1,\ldots,N-1.
+\]</span> For deaths inside the transient state space, <span class="math display">\[
+Q^{+}_{k,k-1}=\mu_k, \qquad k=2,\ldots,N.
+\]</span> The transition from state <span class="math inline">\(1\)</span> to state <span class="math inline">\(0\)</span> is killed and not included as an off-diagonal entry of <span class="math inline">\(Q^{+}\)</span>.</p>
+<section id="perronfrobenius-decomposition-rpf.r" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="perronfrobenius-decomposition-rpf.r"><span class="header-section-number">6.1</span> Perron–Frobenius decomposition: <code>R/pf.R</code></h2>
+<p>The function <code>pf_decomp_Qplus(Q_plus)</code> computes the Perron–Frobenius objects of the killed generator.</p>
+<p>It returns:</p>
+<ul>
+<li><code>gamma</code>: maximal real eigenvalue of <span class="math inline">\(Q^+\)</span>;</li>
+<li><code>h</code>: positive right eigenvector;</li>
+<li><code>v</code>: positive left eigenvector.</li>
+</ul>
+<p>The convention is <span class="math display">\[
+Q^+h=\gamma h, \qquad v^\top Q^+=\gamma v^\top.
+\]</span> The vectors are normalized so that <span class="math display">\[
+\sum_{k=1}^N v_k h_k = 1.
+\]</span></p>
+</section>
+<section id="doob-h-ratios" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="doob-h-ratios"><span class="header-section-number">6.2</span> Doob-<span class="math inline">\(h\)</span> ratios</h2>
+<p>The function <code>compute_R_pm(h)</code> computes <span class="math display">\[
+R^{+}(k)=\frac{h(k+1)}{h(k)}, \qquad k=1,\ldots,N-1,
+\]</span> and <span class="math display">\[
+R^{-}(k)=\frac{h(k-1)}{h(k)}, \qquad k=1,\ldots,N.
+\]</span></p>
+<p>We have <span class="math inline">\(h(0) = 0\)</span>, so <span class="math inline">\(R^{-}(1) = 0\)</span>. The value <span class="math inline">\(R^{+}(N)\)</span> is undefined, since births from state <span class="math inline">\(N\)</span> are impossible.</p>
+</section>
+<section id="q-process-invariant-distribution" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="q-process-invariant-distribution"><span class="header-section-number">6.3</span> Q-process invariant distribution</h2>
+<p>The function <code>compute_pi(v, h)</code> computes the invariant distribution of the Q-process, <span class="math inline">\(\pi_k = v_kh_k\)</span>.</p>
+</section>
+</section>
+<section id="unmarked-unconditional-mle" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Unmarked unconditional MLE</h1>
+<p>The file <code>R/unc_mle.R</code> computes the naive unconditional MLE when birth marks are not used.</p>
+<p>The function <code>fit_unc_mle_complete(stats, N, init)</code> uses the sufficient statistics <span class="math inline">\(T_k\)</span>, <span class="math inline">\(B_k\)</span>, and <span class="math inline">\(D_k\)</span>, where <span class="math inline">\(B_k=U_k+V_k\)</span> is the total number of births from state <span class="math inline">\(k\)</span>.</p>
+<p>The unconditional birth intensity is <span class="math display">\[
+\lambda_k(b)=b_1\phi_1(k,N)+b_2\phi_2(k,N).
+\]</span> Since <span class="math inline">\(b_1\)</span> and <span class="math inline">\(b_2\)</span> are coupled inside <span class="math inline">\(\lambda_k(b)\)</span>, the birth part is optimized numerically.</p>
+<p>The recovery parameter has the closed-form estimate <span class="math display">\[
+\widehat\mu = \frac{\sum_{k=1}^{N}D_k}
+{\sum_{k=1}^{N}T_k k}.
+\]</span></p>
+<p>The main functions are:</p>
+<ul>
+<li><code>mu_hat_unc_complete(stats, N)</code>: closed-form estimate of <span class="math inline">\(\mu\)</span>;</li>
+<li><code>loglik_unc_complete(par, stats, N)</code>: unconditional log-likelihood;</li>
+<li><code>score_unc_complete(par, stats, N)</code>: unconditional score;</li>
+<li><code>fit_unc_mle_complete(stats, N, init)</code>: unconditional MLE.</li>
+</ul>
+<p>The fit returns <code>par_hat</code>, <code>loglik</code>, <code>score</code>, <code>convergence</code>, and the raw <code>optim</code> object. This estimator is “naive” because it treats the observed path as drawn from the unconditional law.</p>
+</section>
+<section id="marked-unconditional-mle" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Marked unconditional MLE</h1>
+<p>The file <code>R/unc_mle_marked.R</code> computes the naive unconditional MLE when birth marks are observed.</p>
+<p>The function <code>fit_unc_mle_marked_complete(stats, N)</code> uses <span class="math inline">\(T_k\)</span>, <span class="math inline">\(U_k\)</span>, <span class="math inline">\(V_k\)</span>, and <span class="math inline">\(D_k\)</span>. Since the birth mechanism is observed, the unconditional likelihood separates by mechanism: <span class="math display">\[
+\widehat b_1 =
+\frac{\sum_{k=1}^{N-1} U_k}
+{\sum_{k=1}^{N-1} T_k\phi_1(k,N)},
+\]</span> <span class="math display">\[
+\widehat b_2=
+\frac{\sum_{k=1}^{N-1} V_k}
+{\sum_{k=1}^{N-1} T_k\phi_2(k,N)},
+\]</span> and <span class="math display">\[
+\widehat\mu =
+\frac{\sum_{k=1}^{N} D_k}
+{\sum_{k=1}^{N} T_k k}.
+\]</span></p>
+<p>The function returns <code>par_hat = c(b1 = ..., b2 = ..., mu = ...)</code>.</p>
+</section>
+<section id="conditional-mle-for-unmarked-births" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Conditional MLE for unmarked births</h1>
+<p>The file <code>R/mle.R</code> implements the full conditional MLE for unmarked births.</p>
+<p>The conditional likelihood is written using Q-process tilted rates. If <span class="math inline">\(h\)</span> is the Perron–Frobenius right eigenvector of the killed generator <span class="math inline">\(Q^+\)</span>, define <span class="math display">\[
+R^{+}(k)=\frac{h(k+1)}{h(k)}, \qquad R^{-}(k)=\frac{h(k-1)}{h(k)}.
+\]</span> The tilted birth and death rates are <span class="math display">\[
+\widetilde\lambda_k=\lambda_k(b)R^{+}(k), \qquad
+\widetilde\mu_k=\mu k R^{-}(k).
+\]</span></p>
+<p>For unmarked births, the likelihood uses the total birth count <span class="math display">\[
+B_k=U_k+V_k.
+\]</span></p>
+<section id="tilt-objects" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="tilt-objects"><span class="header-section-number">9.1</span> Tilt objects</h2>
+<p>The function <code>compute_log_R_pm_complete(par, N)</code> computes the Perron–Frobenius objects and the log tilt ratios <span class="math display">\[
+\log R^{+}(k), \qquad \log R^{-}(k).
+\]</span></p>
+<p>The function <code>compute_tilted_rates_complete(par, N)</code> computes the base and tilted rates, including:</p>
+<ul>
+<li><code>R_plus</code>, <code>R_minus</code>;</li>
+<li><code>lambda_base</code>, <code>mu_base</code>;</li>
+<li><code>lambda_tilde</code>, <code>mu_tilde</code>.</li>
+</ul>
+<p>The function <code>grad_log_R_num_complete(par, N, eps)</code> computes numerical derivatives of the log tilt factors, <span class="math display">\[
+\nabla_\theta \log R^{+}(k), \qquad
+\nabla_\theta \log R^{-}(k),
+\]</span> using centred finite differences.</p>
+</section>
+<section id="conditional-log-likelihood" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="conditional-log-likelihood"><span class="header-section-number">9.2</span> Conditional log-likelihood</h2>
+<p>The function <code>loglik_mle_complete(par, stats, N)</code> evaluates <span class="math display">\[
+\ell_T(\theta) =
+\sum_{k=1}^{N-1}
+\left[
+B_k\log\widetilde\lambda_k - T_k\widetilde\lambda_k
+\right]
++
+\sum_{k=2}^{N}
+\left[
+D_k\log\widetilde\mu_k - T_k\widetilde\mu_k
+\right].
+\]</span> The death sum starts at <span class="math inline">\(k=2\)</span> because under the Q-process the transition from 1 to 0 is removed.</p>
+</section>
+<section id="conditional-score" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="conditional-score"><span class="header-section-number">9.3</span> Conditional score</h2>
+<p>The function <code>score_mle_complete(par, stats, N, eps)</code> evaluates the full conditional score.</p>
+<p>Unlike the QMLE working score, this score includes the tilt sensitivity terms <span class="math display">\[
+\nabla_\theta \log R^{+}(k), \qquad
+\nabla_\theta \log R^{-}(k).
+\]</span></p>
+</section>
+<section id="mle-fit" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="mle-fit"><span class="header-section-number">9.4</span> MLE fit</h2>
+<p>The function <code>fit_mle_complete(stats, N, init)</code> computes the full conditional MLE by numerical optimization of <code>loglik_mle_complete()</code>.</p>
+<p>The fit returns <code>par_hat</code>, <code>loglik</code>, <code>score</code>, <code>convergence</code>, and the raw <code>optim</code> object.</p>
+</section>
+</section>
+<section id="conditional-mle-for-marked-births" class="level1" data-number="10">
+<h1 data-number="10"><span class="header-section-number">10</span> Conditional MLE for marked births</h1>
+<p>The file <code>R/mle_marked.R</code> implements the full conditional MLE when birth marks are observed. The marked likelihood uses the separate birth counts <span class="math display">\[
+U_k = \text{number of pairwise births from state } k,
+\]</span> and <span class="math display">\[
+V_k = \text{number of triadic births from state } k.
+\]</span></p>
+<p>Under the Q-process, the marked tilted birth rates are <span class="math display">\[
+\widetilde\lambda_{1,k}=
+b_1\phi_1(k,N)R^{+}(k),
+\qquad
+\widetilde\lambda_{2,k}=
+b_2\phi_2(k,N)R^{+}(k),
+\]</span> and the tilted death rate is <span class="math display">\[
+\widetilde\mu_k=\mu k R^{-}(k).
+\]</span></p>
+<p>The functions in this file reuse the Q-process objects and numerical tilt derivatives from <code>R/mle.R</code>.</p>
+<section id="conditional-log-likelihood-1" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="conditional-log-likelihood-1"><span class="header-section-number">10.1</span> Conditional log-likelihood</h2>
+<p>The function <code>loglik_mle_marked_complete(par, stats, N)</code> evaluates <span class="math display">\[
+\ell_T(\theta)=
+\sum_{k=1}^{N-1}
+\left[
+U_k\log\widetilde\lambda_{1,k} - T_k\widetilde\lambda_{1,k}
+\right]
++
+\sum_{k=1}^{N-1}
+\left[
+V_k\log\widetilde\lambda_{2,k} - T_k\widetilde\lambda_{2,k}
+\right]
++
+\sum_{k=2}^{N}
+\left[
+D_k\log\widetilde\mu_k - T_k\widetilde\mu_k
+\right].
+\]</span></p>
+</section>
+<section id="conditional-score-1" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="conditional-score-1"><span class="header-section-number">10.2</span> Conditional score</h2>
+<p>The function <code>score_mle_marked_complete(par, stats, N, eps)</code> evaluates the full marked conditional score.</p>
+<p>The score includes the numerical derivatives of the tilt factors, <span class="math display">\[
+\nabla_\theta \log R^{+}(k), \qquad
+\nabla_\theta \log R^{-}(k).
+\]</span> Thus this is the full marked conditional score, not the fixed-tilt working score implemented in <code>R/qem.R</code>.</p>
+</section>
+<section id="mle-fit-1" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="mle-fit-1"><span class="header-section-number">10.3</span> MLE fit</h2>
+<p>The function <code>fit_mle_marked_complete(stats, N, init)</code> computes the marked conditional MLE by numerical optimization of <code>loglik_mle_marked_complete()</code>. The fit returns <code>par_hat</code>, <code>loglik</code>, <code>score</code>, <code>convergence</code>, and the raw <code>optim</code> object.</p>
+</section>
+</section>
+<section id="qmle-for-unmarked-births" class="level1" data-number="11">
+<h1 data-number="11"><span class="header-section-number">11</span> QMLE for unmarked births</h1>
+<p>The file <code>R/qmle.R</code> implements the quasi-MLE for unmarked births.</p>
+<p>The QMLE is based on the Q-process likelihood, but uses a working score that treats the Doob-<span class="math inline">\(h\)</span> tilt factors as fixed. Equivalently, it ignores <span class="math display">\[
+\nabla_\theta \log R^{+}(k), \qquad
+\nabla_\theta \log R^{-}(k).
+\]</span></p>
+<p>The tilted rates still appear in the compensator terms, so the QMLE is not the same as the naive unconditional MLE.</p>
+<p>For unmarked births, the observed birth count is <span class="math inline">\(B_k=U_k+V_k\)</span>. The working birth score uses <span class="math display">\[
+\frac{\partial}{\partial b_1}\log\lambda_k(b)=
+\frac{\phi_1(k,N)}{\lambda_k(b)},
+\qquad
+\frac{\partial}{\partial b_2}\log\lambda_k(b)=
+\frac{\phi_2(k,N)}{\lambda_k(b)}.
+\]</span></p>
+<section id="working-score" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="working-score"><span class="header-section-number">11.1</span> Working score</h2>
+<p>The function <code>score_qmle_complete(par, stats, N)</code> evaluates the QMLE working score. It uses <span class="math inline">\(T_k\)</span>, <span class="math inline">\(B_k\)</span>, and <span class="math inline">\(D_k\)</span>, and recomputes the Q-process tilt factors at the current parameter value.</p>
+</section>
+<section id="numerical-jacobian" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="numerical-jacobian"><span class="header-section-number">11.2</span> Numerical Jacobian</h2>
+<p>The function <code>jacobian_beta_qmle_complete(par, stats, N, eps)</code> computes a numerical Jacobian for the birth-score block in <span class="math inline">\((b_1,b_2)\)</span>. This is used by the block-Newton iteration in <code>fit_qmle_complete()</code>.</p>
+</section>
+<section id="score-norm" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="score-norm"><span class="header-section-number">11.3</span> Score norm</h2>
+<p>The function <code>qmle_score_norm_complete(par, stats, N)</code> computes the squared norm of the working score. It is used for diagnostics.</p>
+</section>
+<section id="qmle-fit" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="qmle-fit"><span class="header-section-number">11.4</span> QMLE fit</h2>
+<p>The function <code>fit_qmle_complete(stats, N, init)</code> computes the QMLE by iterating:</p>
+<ol type="1">
+<li>evaluate the working score</li>
+<li>update <span class="math inline">\((b_1,b_2)\)</span> by a Newton step using the numerical Jacobian</li>
+<li>update <span class="math inline">\(\mu\)</span> in closed form with the current tilt factor <span class="math inline">\(R^{-}\)</span></li>
+<li>recompute the tilt at the new parameter value</li>
+</ol>
+<p>The fit returns <code>par_hat</code>, <code>score</code>, <code>converged</code>, <code>iterations</code>, and <code>trace</code>.</p>
+</section>
+</section>
+<section id="fisher-information-and-covariance" class="level1" data-number="12">
+<h1 data-number="12"><span class="header-section-number">12</span> Fisher information and covariance:</h1>
+<p>The file <code>R/fisher.R</code> computes Fisher information and covariance estimates for the full conditional MLE.</p>
+<p>It is used to compute the Fisher-information-based standard error of the unconstrained conditional MLE of <span class="math inline">\(b_2\)</span>.</p>
+<section id="score-weights" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="score-weights"><span class="header-section-number">12.1</span> Score weights</h2>
+<p>The function <code>compute_full_score_weights_complete(par, N, eps)</code> computes the full score weights for births and deaths.</p>
+<p>For births, the weights are stored in <code>G_plus</code>. For deaths, they are stored in <code>G_minus</code>. These weights include the tilt sensitivity terms <span class="math display">\[
+\nabla_\theta \log R^{+}(k), \qquad
+\nabla_\theta \log R^{-}(k).
+\]</span> Thus these are score weights for the full conditional MLE, not for the QMLE working score.</p>
+</section>
+<section id="fisher-information" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="fisher-information"><span class="header-section-number">12.2</span> Fisher information</h2>
+<p>The function <code>compute_fisher_complete(par, N, eps)</code> computes the Fisher information matrix <span class="math display">\[
+\mathcal I(\theta) =
+\sum_{k=1}^{N-1}
+\pi_k \widetilde\lambda_k
+G^{+}_k(G^{+}_k)^\top
++
+\sum_{k=2}^{N}
+\pi_k \widetilde\mu_k
+G^{-}_k(G^{-}_k)^\top.
+\]</span> Here <span class="math inline">\(\pi_k\)</span> is the invariant distribution of the Q-process, and <span class="math display">\[
+\widetilde\lambda_k=\lambda_k(b)R^{+}(k),
+\qquad
+\widetilde\mu_k=\mu k R^{-}(k).
+\]</span></p>
+<p>The matrix is symmetrized before being returned.</p>
+</section>
+<section id="covariance-matrix" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="covariance-matrix"><span class="header-section-number">12.3</span> Covariance matrix</h2>
+<p>The function <code>vcov_mle_complete(par_hat, stats, N, eps, ridge)</code> computes <span class="math display">\[
+\widehat{\mathrm{Var}}(\widehat\theta) =
+\frac{1}{T_{\mathrm{obs}}}
+\widehat{\mathcal I}(\widehat\theta)^{-1},
+\]</span> where <span class="math display">\[
+T_{\mathrm{obs}}=\sum_{k=0}^N T_k.
+\]</span></p>
+<p>It returns:</p>
+<ul>
+<li><code>vcov</code>: estimated covariance matrix;</li>
+<li><code>fisher</code>: Fisher information matrix.</li>
+</ul>
+<p>The argument <code>ridge</code> adds a small diagonal ridge before inversion.</p>
+</section>
+<section id="standard-errors" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="standard-errors"><span class="header-section-number">12.4</span> Standard errors</h2>
+<p>The function <code>se_mle_complete(par_hat, stats, N, eps, ridge)</code> returns the square roots of the diagonal entries of the covariance matrix.</p>
+<p>For the boundary test, the relevant standard error is <span class="math display">\[
+\widehat{\mathrm{se}}(\widehat b_2) =
+\sqrt{\widehat{\mathrm{Var}}(\widehat b_2)}.
+\]</span></p>
+</section>
+</section>
+<section id="q-em-and-working-score-algorithms" class="level1" data-number="13">
+<h1 data-number="13"><span class="header-section-number">13</span> Q-EM and working-score algorithms</h1>
+<p>The file <code>R/qem.R</code> implements stable fixed-point algorithms suggested by the Q-process likelihood.</p>
+<p>This is an EM-type algorithm for the working-score problem, not for the full conditional likelihood. In the full likelihood, the tilt factors depend on the parameter vector, and their derivatives contribute to the exact score. The Q-EM algorithms ignore these sensitivity terms during each update and recompute the tilt at the next iterate.</p>
+<p>The function <code>compute_q_tilt_complete(par, N)</code> computes the current Doob-<span class="math inline">\(h\)</span> tilt factors <span class="math inline">\(R^{+}(k)\)</span> and <span class="math inline">\(R^{-}(k)\)</span>.</p>
+<section id="marked-births" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="marked-births"><span class="header-section-number">13.1</span> Marked births</h2>
+<p>The function <code>fit_qem_marked_complete(stats, N, init, max_iter, tol)</code> implements the fixed-point algorithm when birth marks are observed.</p>
+<p>At iteration <span class="math inline">\(m\)</span>, the algorithm computes the current tilt factors from <span class="math display">\[
+\theta^{(m)}=(b_1^{(m)},b_2^{(m)},\mu^{(m)}).
+\]</span> It then updates <span class="math display">\[
+b_1^{(m+1)} =
+\frac{\sum_{k=1}^{N-1} U_k}
+{\sum_{k=1}^{N-1}T_k\phi_1(k,N)R^{+,(m)}(k)},
+\]</span> <span class="math display">\[
+b_2^{(m+1)} =
+\frac{\sum_{k=1}^{N-1} V_k}
+{\sum_{k=1}^{N-1}T_k\phi_2(k,N)R^{+,(m)}(k)},
+\]</span> and <span class="math display">\[
+\mu^{(m+1)} =
+\frac{\sum_{k=2}^{N} D_k}
+{\sum_{k=2}^{N}T_k r(k)R^{-,(m)}(k)}.
+\]</span></p>
+<p>Algorithm repeats these steps until the stopping criterion is met or the maximum number of iterations is reached.</p>
+</section>
+<section id="unmarked-births" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="unmarked-births"><span class="header-section-number">13.2</span> Unmarked births</h2>
+<p>The function <code>fit_qem_unmarked_complete(stats, N, init, max_iter, tol)</code> implements the fixed-point algorithm when birth marks are unobserved.</p>
+<p>Only birth count <span class="math inline">\(B_k= U_k + V_k\)</span> is observed. At iteration <span class="math inline">\(m\)</span>, the algorithm imputes the expected split of using the current birth parameters.</p>
+<p>The conditional probabilities in E-step are <span class="math display">\[
+\begin{align*}
+p_1^{(m)}(k) &amp;=
+\frac{b_1^{(m)}\phi_1(k)}
+{b_1^{(m)}\phi_1(k)+b_2^{(m)}\phi_2(k)}, \\[2em]
+p_2^{(m)}(k) &amp;=
+\frac{b_2^{(m)}\phi_2(k)}
+{b_1^{(m)}\phi_1(k)+b_2^{(m)}\phi_2(k)}.
+\end{align*}
+\]</span></p>
+<p>The common Doob-transform factor <span class="math inline">\(R^+(k)\)</span> cancels in these ratios, since it multiplies every birth mechanism at the same state. Thus the E-step does not involve the tilt factor. The imputed total birth counts are <span class="math display">\[
+\widehat U^{(m)} = \sum_{k=1}^{N-1} B_k p_1^{(m)}(k), \qquad
+\widehat V^{(m)} = \sum_{k=1}^{N-1} B_k p_2^{(m)}(k).
+\]</span></p>
+<p>The M-step uses the tilted exposure denominators. After computing the current tilt factors <span class="math inline">\(R^{+,(m)}\)</span> and <span class="math inline">\(R^{-,(m)}\)</span>, the updates are <span class="math display">\[
+b_1^{(m+1)} =
+\frac{\widehat U^{(m)}}
+{\sum_{k=1}^{N-1} T_k \phi_1(k) R^{+,(m)}(k)},
+\]</span></p>
+<p><span class="math display">\[
+b_2^{(m+1)} =
+\frac{\widehat V^{(m)}}
+{\sum_{k=1}^{N-1} T_k \phi_2(k) R^{+,(m)}(k)},
+\]</span></p>
+<p>and <span class="math display">\[
+\mu^{(m+1)} =
+\frac{\sum_{k=2}^{N} D_k}
+{\sum_{k=2}^{N} T_k k R^{-,(m)}(k)}.
+\]</span></p>
+<p>The unmarked map converges more slowly than the marked one, because the imputation probabilities <span class="math inline">\(p_1^{(m)},p_2^{(m)}\)</span> depend on the current parameters and so feed back into each iterate.</p>
+<p>The script <code>scripts/check_qem_estimators.R</code> compares the Q-EM fixed-point estimates with the QMLE and conditional MLE estimates.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/markolalovic\.github\.io\/composite-birth-death\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

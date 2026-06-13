@@ -1,0 +1,156 @@
+[
+  {
+    "objectID": "workflow/reproducibility.html",
+    "href": "workflow/reproducibility.html",
+    "title": "Reproducibility workflow",
+    "section": "",
+    "text": "This page describes how to regenerate the simulated sufficient statistics, estimates, and figures used in the running example.\n\nOverview\nR version 4.5.2 was used. The only non-base package required is dplyr (version 1.2.1 was used):\ninstall.packages(\"dplyr\")\nThe scripts also use the base package parallel. Plotting uses base R graphics only.\nThe workflow for reproducing Figures 3-8 is:\n\nsimulate surviving trajectories and save sufficient statistics in data/simulated/\ncalculate estimates from these statistics and save CSV files in data/\ngenerate figures from CSV files and save them in PDF in figures/\n\nThe repository includes precomputed sufficient statistics in data/simulated/. To regenerate them, run:\nRscript scripts/precompute_surviving_stats.R\nTo rerun the full workflow: regenerating simulated data, recalculating estimates, and recreating the figures, you can run shell script:\n./reproduce_figures.sh\nHow to reproduce individual figures is described below.\n\n\nFigure 3: surviving trajectory\nRun:\nRscript scripts/fig03_single_trajectory.R\nOutput:\nfigures/single_trajectory_base.pdf\nThis script simulates the SIS process on a complete hypergraph / complete simplicial complex with \\[\nN=100, \\qquad X_0=10, \\qquad T=100,\n\\] and \\[\nb_1=1.01, \\qquad b_2=3.70, \\qquad \\mu=1.\n\\]\nIt repeatedly simulates trajectories until one survives up to time \\(T=100\\), then plots the infected count over time.\n\n\nFigure 4: unconditional MLEs\nFigure 4 uses \\(200\\) trajectories conditioned to survive up to time \\(T=1000\\).\nRequired sufficient statistics:\ndata/simulated/stats_baseline_T1000_M200.rds\nCompute estimates:\nRscript scripts/compare_estimators_parallel.R\nRscript scripts/test_unc_mle_marked.R\nOutputs:\ndata/comparison_estimators_1000.csv\ndata/comparison_estimators_marked_1000.csv\nPlot:\nRscript scripts/fig04_plot_unconditional_mle.R\nOutputs:\nfigures/unconditional_mle_1000.pdf\nfigures/unconditional_mle_marked_1000.pdf\nThe unmarked panel uses total birth counts \\(B_k = U_k + V_k\\). The marked panel uses \\(U_k\\) and \\(V_k\\) separately.\n\n\nFigures 5 and 6: conditional MLEs\nFigures 5 and 6 use \\(200\\) trajectories conditioned to survive up to times \\(T=200,500,1000\\).\nRequired sufficient statistics:\ndata/simulated/stats_baseline_T200_M200.rds\ndata/simulated/stats_baseline_T500_M200.rds\ndata/simulated/stats_baseline_T1000_M200.rds\nCompute estimates:\nRscript scripts/compare_estimators_parallel.R\nRscript scripts/validate_mle_marked_parallel.R\nOutputs:\ndata/comparison_estimators_200.csv\ndata/comparison_estimators_500.csv\ndata/comparison_estimators_1000.csv\n\ndata/estimates_mle_marked_200.csv\ndata/estimates_mle_marked_500.csv\ndata/estimates_mle_marked_1000.csv\nThe comparison_estimators_{T}.csv files contain the unmarked conditional MLE columns b1_mle, b2_mle, and mu_mle. The estimates_mle_marked_{T}.csv files contain the corresponding marked estimates.\nPlot:\nRscript scripts/fig05-06_plot_mle_consistency_panels.R\nOutputs:\nfigures/mle_consistency_unmarked_200.pdf\nfigures/mle_consistency_unmarked_500.pdf\nfigures/mle_consistency_unmarked_1000.pdf\n\nfigures/mle_consistency_marked_200.pdf\nfigures/mle_consistency_marked_500.pdf\nfigures/mle_consistency_marked_1000.pdf\n\n\nFigure 7: estimator comparison\nFigure 7 uses \\(200\\) trajectories conditioned to survive up to times \\(T=100,200,\\dots,1000\\).\nRequired sufficient statistics:\ndata/simulated/stats_baseline_T100_M200.rds\n...\ndata/simulated/stats_baseline_T1000_M200.rds\nCompute estimates:\nRscript scripts/compare_estimators_parallel.R\nOutputs:\ndata/comparison_estimators_100.csv\n...\ndata/comparison_estimators_1000.csv\nFiles contain the unconditional MLE, conditional MLE, and QMLE columns:\nb1_unc,  b2_unc,  mu_unc\nb1_mle,  b2_mle,  mu_mle\nb1_qmle, b2_qmle, mu_qmle\nPlot:\nRscript scripts/fig07_plot_compare_estimators.R\nOutputs:\nfigures/comparison_estimator_means_a.pdf\nfigures/comparison_estimator_means_b.pdf\n\n\nFigure 8: boundary test\nFigure 8 uses \\(1000\\) trajectories generated under the null hypothesis \\(H_0:b_2=0\\), conditioned to survive up to time \\(T=1000\\).\nThe null parameter vector is \\[\nb_1=2.875, \\qquad b_2=0, \\qquad \\mu=1.\n\\]\nRequired sufficient statistics:\ndata/simulated/stats_null_T1000_M1000.rds\nCompute the boundary-test statistics:\nRscript scripts/boundary_test_MLE_parallel.R\nOutput:\ndata/boundary_test_MLE.csv\nOutput file contains the unconstrained conditional MLE, the Fisher-information-based standard error for b2, and the standardized statistic Z_b2.\nPlot:\nRscript scripts/fig08_plot_boundary_testing.R\nOutput:\nfigures/boundary_testing.pdf\nThe plotted statistic is \\[\nZ_{2,T} = \\frac{\\widehat b_2}{\\widehat{\\mathrm{se}}(\\widehat b_2)}.\n\\]"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Function documentation",
+    "section": "",
+    "text": "This page documents the R source files used for simulations, estimators, covariance calculations, and fixed-point algorithms.\nThe reproducibility workflow (which script generates which data file and figure) is documented separately in Reproducibility."
+  },
+  {
+    "objectID": "index.html#perronfrobenius-decomposition-rpf.r",
+    "href": "index.html#perronfrobenius-decomposition-rpf.r",
+    "title": "Function documentation",
+    "section": "6.1 Perron–Frobenius decomposition: R/pf.R",
+    "text": "6.1 Perron–Frobenius decomposition: R/pf.R\nThe function pf_decomp_Qplus(Q_plus) computes the Perron–Frobenius objects of the killed generator.\nIt returns:\n\ngamma: maximal real eigenvalue of \\(Q^+\\);\nh: positive right eigenvector;\nv: positive left eigenvector.\n\nThe convention is \\[\nQ^+h=\\gamma h, \\qquad v^\\top Q^+=\\gamma v^\\top.\n\\] The vectors are normalized so that \\[\n\\sum_{k=1}^N v_k h_k = 1.\n\\]"
+  },
+  {
+    "objectID": "index.html#doob-h-ratios",
+    "href": "index.html#doob-h-ratios",
+    "title": "Function documentation",
+    "section": "6.2 Doob-\\(h\\) ratios",
+    "text": "6.2 Doob-\\(h\\) ratios\nThe function compute_R_pm(h) computes \\[\nR^{+}(k)=\\frac{h(k+1)}{h(k)}, \\qquad k=1,\\ldots,N-1,\n\\] and \\[\nR^{-}(k)=\\frac{h(k-1)}{h(k)}, \\qquad k=1,\\ldots,N.\n\\]\nWe have \\(h(0) = 0\\), so \\(R^{-}(1) = 0\\). The value \\(R^{+}(N)\\) is undefined, since births from state \\(N\\) are impossible."
+  },
+  {
+    "objectID": "index.html#q-process-invariant-distribution",
+    "href": "index.html#q-process-invariant-distribution",
+    "title": "Function documentation",
+    "section": "6.3 Q-process invariant distribution",
+    "text": "6.3 Q-process invariant distribution\nThe function compute_pi(v, h) computes the invariant distribution of the Q-process, \\(\\pi_k = v_kh_k\\)."
+  },
+  {
+    "objectID": "index.html#tilt-objects",
+    "href": "index.html#tilt-objects",
+    "title": "Function documentation",
+    "section": "9.1 Tilt objects",
+    "text": "9.1 Tilt objects\nThe function compute_log_R_pm_complete(par, N) computes the Perron–Frobenius objects and the log tilt ratios \\[\n\\log R^{+}(k), \\qquad \\log R^{-}(k).\n\\]\nThe function compute_tilted_rates_complete(par, N) computes the base and tilted rates, including:\n\nR_plus, R_minus;\nlambda_base, mu_base;\nlambda_tilde, mu_tilde.\n\nThe function grad_log_R_num_complete(par, N, eps) computes numerical derivatives of the log tilt factors, \\[\n\\nabla_\\theta \\log R^{+}(k), \\qquad\n\\nabla_\\theta \\log R^{-}(k),\n\\] using centred finite differences."
+  },
+  {
+    "objectID": "index.html#conditional-log-likelihood",
+    "href": "index.html#conditional-log-likelihood",
+    "title": "Function documentation",
+    "section": "9.2 Conditional log-likelihood",
+    "text": "9.2 Conditional log-likelihood\nThe function loglik_mle_complete(par, stats, N) evaluates \\[\n\\ell_T(\\theta) =\n\\sum_{k=1}^{N-1}\n\\left[\nB_k\\log\\widetilde\\lambda_k - T_k\\widetilde\\lambda_k\n\\right]\n+\n\\sum_{k=2}^{N}\n\\left[\nD_k\\log\\widetilde\\mu_k - T_k\\widetilde\\mu_k\n\\right].\n\\] The death sum starts at \\(k=2\\) because under the Q-process the transition from 1 to 0 is removed."
+  },
+  {
+    "objectID": "index.html#conditional-score",
+    "href": "index.html#conditional-score",
+    "title": "Function documentation",
+    "section": "9.3 Conditional score",
+    "text": "9.3 Conditional score\nThe function score_mle_complete(par, stats, N, eps) evaluates the full conditional score.\nUnlike the QMLE working score, this score includes the tilt sensitivity terms \\[\n\\nabla_\\theta \\log R^{+}(k), \\qquad\n\\nabla_\\theta \\log R^{-}(k).\n\\]"
+  },
+  {
+    "objectID": "index.html#mle-fit",
+    "href": "index.html#mle-fit",
+    "title": "Function documentation",
+    "section": "9.4 MLE fit",
+    "text": "9.4 MLE fit\nThe function fit_mle_complete(stats, N, init) computes the full conditional MLE by numerical optimization of loglik_mle_complete().\nThe fit returns par_hat, loglik, score, convergence, and the raw optim object."
+  },
+  {
+    "objectID": "index.html#conditional-log-likelihood-1",
+    "href": "index.html#conditional-log-likelihood-1",
+    "title": "Function documentation",
+    "section": "10.1 Conditional log-likelihood",
+    "text": "10.1 Conditional log-likelihood\nThe function loglik_mle_marked_complete(par, stats, N) evaluates \\[\n\\ell_T(\\theta)=\n\\sum_{k=1}^{N-1}\n\\left[\nU_k\\log\\widetilde\\lambda_{1,k} - T_k\\widetilde\\lambda_{1,k}\n\\right]\n+\n\\sum_{k=1}^{N-1}\n\\left[\nV_k\\log\\widetilde\\lambda_{2,k} - T_k\\widetilde\\lambda_{2,k}\n\\right]\n+\n\\sum_{k=2}^{N}\n\\left[\nD_k\\log\\widetilde\\mu_k - T_k\\widetilde\\mu_k\n\\right].\n\\]"
+  },
+  {
+    "objectID": "index.html#conditional-score-1",
+    "href": "index.html#conditional-score-1",
+    "title": "Function documentation",
+    "section": "10.2 Conditional score",
+    "text": "10.2 Conditional score\nThe function score_mle_marked_complete(par, stats, N, eps) evaluates the full marked conditional score.\nThe score includes the numerical derivatives of the tilt factors, \\[\n\\nabla_\\theta \\log R^{+}(k), \\qquad\n\\nabla_\\theta \\log R^{-}(k).\n\\] Thus this is the full marked conditional score, not the fixed-tilt working score implemented in R/qem.R."
+  },
+  {
+    "objectID": "index.html#mle-fit-1",
+    "href": "index.html#mle-fit-1",
+    "title": "Function documentation",
+    "section": "10.3 MLE fit",
+    "text": "10.3 MLE fit\nThe function fit_mle_marked_complete(stats, N, init) computes the marked conditional MLE by numerical optimization of loglik_mle_marked_complete(). The fit returns par_hat, loglik, score, convergence, and the raw optim object."
+  },
+  {
+    "objectID": "index.html#working-score",
+    "href": "index.html#working-score",
+    "title": "Function documentation",
+    "section": "11.1 Working score",
+    "text": "11.1 Working score\nThe function score_qmle_complete(par, stats, N) evaluates the QMLE working score. It uses \\(T_k\\), \\(B_k\\), and \\(D_k\\), and recomputes the Q-process tilt factors at the current parameter value."
+  },
+  {
+    "objectID": "index.html#numerical-jacobian",
+    "href": "index.html#numerical-jacobian",
+    "title": "Function documentation",
+    "section": "11.2 Numerical Jacobian",
+    "text": "11.2 Numerical Jacobian\nThe function jacobian_beta_qmle_complete(par, stats, N, eps) computes a numerical Jacobian for the birth-score block in \\((b_1,b_2)\\). This is used by the block-Newton iteration in fit_qmle_complete()."
+  },
+  {
+    "objectID": "index.html#score-norm",
+    "href": "index.html#score-norm",
+    "title": "Function documentation",
+    "section": "11.3 Score norm",
+    "text": "11.3 Score norm\nThe function qmle_score_norm_complete(par, stats, N) computes the squared norm of the working score. It is used for diagnostics."
+  },
+  {
+    "objectID": "index.html#qmle-fit",
+    "href": "index.html#qmle-fit",
+    "title": "Function documentation",
+    "section": "11.4 QMLE fit",
+    "text": "11.4 QMLE fit\nThe function fit_qmle_complete(stats, N, init) computes the QMLE by iterating:\n\nevaluate the working score\nupdate \\((b_1,b_2)\\) by a Newton step using the numerical Jacobian\nupdate \\(\\mu\\) in closed form with the current tilt factor \\(R^{-}\\)\nrecompute the tilt at the new parameter value\n\nThe fit returns par_hat, score, converged, iterations, and trace."
+  },
+  {
+    "objectID": "index.html#score-weights",
+    "href": "index.html#score-weights",
+    "title": "Function documentation",
+    "section": "12.1 Score weights",
+    "text": "12.1 Score weights\nThe function compute_full_score_weights_complete(par, N, eps) computes the full score weights for births and deaths.\nFor births, the weights are stored in G_plus. For deaths, they are stored in G_minus. These weights include the tilt sensitivity terms \\[\n\\nabla_\\theta \\log R^{+}(k), \\qquad\n\\nabla_\\theta \\log R^{-}(k).\n\\] Thus these are score weights for the full conditional MLE, not for the QMLE working score."
+  },
+  {
+    "objectID": "index.html#fisher-information",
+    "href": "index.html#fisher-information",
+    "title": "Function documentation",
+    "section": "12.2 Fisher information",
+    "text": "12.2 Fisher information\nThe function compute_fisher_complete(par, N, eps) computes the Fisher information matrix \\[\n\\mathcal I(\\theta) =\n\\sum_{k=1}^{N-1}\n\\pi_k \\widetilde\\lambda_k\nG^{+}_k(G^{+}_k)^\\top\n+\n\\sum_{k=2}^{N}\n\\pi_k \\widetilde\\mu_k\nG^{-}_k(G^{-}_k)^\\top.\n\\] Here \\(\\pi_k\\) is the invariant distribution of the Q-process, and \\[\n\\widetilde\\lambda_k=\\lambda_k(b)R^{+}(k),\n\\qquad\n\\widetilde\\mu_k=\\mu k R^{-}(k).\n\\]\nThe matrix is symmetrized before being returned."
+  },
+  {
+    "objectID": "index.html#covariance-matrix",
+    "href": "index.html#covariance-matrix",
+    "title": "Function documentation",
+    "section": "12.3 Covariance matrix",
+    "text": "12.3 Covariance matrix\nThe function vcov_mle_complete(par_hat, stats, N, eps, ridge) computes \\[\n\\widehat{\\mathrm{Var}}(\\widehat\\theta) =\n\\frac{1}{T_{\\mathrm{obs}}}\n\\widehat{\\mathcal I}(\\widehat\\theta)^{-1},\n\\] where \\[\nT_{\\mathrm{obs}}=\\sum_{k=0}^N T_k.\n\\]\nIt returns:\n\nvcov: estimated covariance matrix;\nfisher: Fisher information matrix.\n\nThe argument ridge adds a small diagonal ridge before inversion."
+  },
+  {
+    "objectID": "index.html#standard-errors",
+    "href": "index.html#standard-errors",
+    "title": "Function documentation",
+    "section": "12.4 Standard errors",
+    "text": "12.4 Standard errors\nThe function se_mle_complete(par_hat, stats, N, eps, ridge) returns the square roots of the diagonal entries of the covariance matrix.\nFor the boundary test, the relevant standard error is \\[\n\\widehat{\\mathrm{se}}(\\widehat b_2) =\n\\sqrt{\\widehat{\\mathrm{Var}}(\\widehat b_2)}.\n\\]"
+  },
+  {
+    "objectID": "index.html#marked-births",
+    "href": "index.html#marked-births",
+    "title": "Function documentation",
+    "section": "13.1 Marked births",
+    "text": "13.1 Marked births\nThe function fit_qem_marked_complete(stats, N, init, max_iter, tol) implements the fixed-point algorithm when birth marks are observed.\nAt iteration \\(m\\), the algorithm computes the current tilt factors from \\[\n\\theta^{(m)}=(b_1^{(m)},b_2^{(m)},\\mu^{(m)}).\n\\] It then updates \\[\nb_1^{(m+1)} =\n\\frac{\\sum_{k=1}^{N-1} U_k}\n{\\sum_{k=1}^{N-1}T_k\\phi_1(k,N)R^{+,(m)}(k)},\n\\] \\[\nb_2^{(m+1)} =\n\\frac{\\sum_{k=1}^{N-1} V_k}\n{\\sum_{k=1}^{N-1}T_k\\phi_2(k,N)R^{+,(m)}(k)},\n\\] and \\[\n\\mu^{(m+1)} =\n\\frac{\\sum_{k=2}^{N} D_k}\n{\\sum_{k=2}^{N}T_k r(k)R^{-,(m)}(k)}.\n\\]\nAlgorithm repeats these steps until the stopping criterion is met or the maximum number of iterations is reached."
+  },
+  {
+    "objectID": "index.html#unmarked-births",
+    "href": "index.html#unmarked-births",
+    "title": "Function documentation",
+    "section": "13.2 Unmarked births",
+    "text": "13.2 Unmarked births\nThe function fit_qem_unmarked_complete(stats, N, init, max_iter, tol) implements the fixed-point algorithm when birth marks are unobserved.\nOnly birth count \\(B_k= U_k + V_k\\) is observed. At iteration \\(m\\), the algorithm imputes the expected split of using the current birth parameters.\nThe conditional probabilities in E-step are \\[\n\\begin{align*}\np_1^{(m)}(k) &=\n\\frac{b_1^{(m)}\\phi_1(k)}\n{b_1^{(m)}\\phi_1(k)+b_2^{(m)}\\phi_2(k)}, \\\\[2em]\np_2^{(m)}(k) &=\n\\frac{b_2^{(m)}\\phi_2(k)}\n{b_1^{(m)}\\phi_1(k)+b_2^{(m)}\\phi_2(k)}.\n\\end{align*}\n\\]\nThe common Doob-transform factor \\(R^+(k)\\) cancels in these ratios, since it multiplies every birth mechanism at the same state. Thus the E-step does not involve the tilt factor. The imputed total birth counts are \\[\n\\widehat U^{(m)} = \\sum_{k=1}^{N-1} B_k p_1^{(m)}(k), \\qquad\n\\widehat V^{(m)} = \\sum_{k=1}^{N-1} B_k p_2^{(m)}(k).\n\\]\nThe M-step uses the tilted exposure denominators. After computing the current tilt factors \\(R^{+,(m)}\\) and \\(R^{-,(m)}\\), the updates are \\[\nb_1^{(m+1)} =\n\\frac{\\widehat U^{(m)}}\n{\\sum_{k=1}^{N-1} T_k \\phi_1(k) R^{+,(m)}(k)},\n\\]\n\\[\nb_2^{(m+1)} =\n\\frac{\\widehat V^{(m)}}\n{\\sum_{k=1}^{N-1} T_k \\phi_2(k) R^{+,(m)}(k)},\n\\]\nand \\[\n\\mu^{(m+1)} =\n\\frac{\\sum_{k=2}^{N} D_k}\n{\\sum_{k=2}^{N} T_k k R^{-,(m)}(k)}.\n\\]\nThe unmarked map converges more slowly than the marked one, because the imputation probabilities \\(p_1^{(m)},p_2^{(m)}\\) depend on the current parameters and so feed back into each iterate.\nThe script scripts/check_qem_estimators.R compares the Q-EM fixed-point estimates with the QMLE and conditional MLE estimates."
+  }
+]
