@@ -3,9 +3,11 @@
 Code for likelihood-based inference in finite-state birth-death processes with composite birth mechanisms.
 
 The general problem is a continuous-time Markov population process with an absorbing state and additive birth rates,
+
 $$
 \lambda_k(\beta)=\sum_{i=1}^K \beta_i f_i(k),
 $$
+
 where each observed upward jump is produced by one of several latent mechanisms. When birth events are unmarked, inference must separate the mechanism-specific rates from a single aggregate trajectory. When observations are conditioned on non-extinction, inference must also correct the survival-selection bias caused by the absorbing state.
 
 The documentation of functions and reproducibility workflow is available at:
