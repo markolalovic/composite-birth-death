@@ -6,6 +6,7 @@ website:
   title: "composite-birth-death"
   site-url: https://markolalovic.github.io/composite-birth-death/
   repo-url: https://github.com/markolalovic/composite-birth-death/
+  description: "Likelihood-based inference for birth-death processes with composite birth mechanisms R reproducibility materials."
   search: true
   navbar:
     pinned: true  
