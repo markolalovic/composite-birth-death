@@ -7,7 +7,9 @@ toc-depth: 1
 
 This page documents the R source files used for simulations, estimators, covariance calculations, and fixed-point algorithms. 
 
-The reproducibility workflow (which script generates which data file and figure) is documented separately in [Reproducibility](workflow/reproducibility.qmd).
+The repository is available at [github.com/markolalovic/composite-birth-death](https://github.com/markolalovic/composite-birth-death).
+
+The reproducibility workflow (which script generates which data file and figure) is documented separately in [Reproducibility](workflow/reproducibility.qmd). 
 
 # Overview
 Consider a continuous-time birth-death process $(X_t)_{t \ge 0}$ on a finite state space ${0,1, \dots, N}$, where $0$ is an absorbing state. The birth rate from state $k \ge 1$ is composite: several distinct mechanisms contribute additively to a single aggregate intensity,

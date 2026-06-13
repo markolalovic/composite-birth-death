@@ -7,6 +7,8 @@ toc-depth: 1
 
 This page describes how to regenerate the simulated sufficient statistics, estimates, and figures used in the running example.
 
+The repository is available at [github.com/markolalovic/composite-birth-death](https://github.com/markolalovic/composite-birth-death).
+
 # Overview
 
 R version 4.5.2 was used. The only non-base package required is `dplyr` (version 1.2.1 was used):
