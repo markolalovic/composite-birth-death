@@ -14,6 +14,13 @@ main p {
   hyphens: auto;
 }
 
+/* Do not justify meta. */
+.meta,
+.meta p {
+  text-align: left;
+  hyphens: none;
+}
+
 /* Add trailing dots to numbered section labels in the left page TOC. */
 #TOC .header-section-number::after {
   content: ".";
@@ -43,22 +50,3 @@ main p {
   padding-bottom: 0.15rem;
 }
 
-/* #quarto-margin-sidebar {
-  width: 360px;
-}
-
-.page-columns {
-  grid-template-columns:
-    [screen-start] 1.5em
-    [screen-start-inset] 3fr
-    [page-start] minmax(25px, 50px)
-    [page-start-inset] minmax(50px, 150px)
-    [body-start-outset] 50px
-    [body-start] 760px
-    [body-end] 50px
-    [body-end-outset] minmax(50px, 150px)
-    [page-end-inset] minmax(25px, 50px)
-    [page-end] 3fr
-    [screen-end-inset] 1.5em
-    [screen-end];
-} */

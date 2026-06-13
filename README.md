@@ -21,7 +21,7 @@ We consider likelihood-based inference for continuous-time birth-death processes
 
 The second issue is survival conditioning. The state 0 is absorbing, so long observed trajectories are selected by non-extinction. Treating such paths as unconditional samples induces survival-selection bias. The methods implemented here use the Doob $h$-transform and the associated Q-process, an ergodic time-homogeneous surrogate for the law of the original process conditioned on long survival. This leads to survival-conditioned MLEs, QMLEs based on working scores, covariance estimates from Fisher and Godambe information, and one-sided boundary tests for the presence of a given birth mechanism.
 
-The code includes Gillespie simulation, sufficient-statistic extraction, unconditional and conditional likelihood estimators, working-score fixed-point algorithms, and Fisher and Godambe information calculations. The running example is an SIS process on a complete hypergraph, with pairwise and triadic transmission.
+The framework here addresses both. The code includes Gillespie simulation, sufficient-statistic extraction, unconditional and conditional likelihood estimators, working-score fixed-point algorithms, and Fisher and Godambe information calculations. The running example is an SIS process on a complete hypergraph, with pairwise and triadic transmission.
 
 Beyond epidemic processes, similar issues of latent event types and survival conditioning can arise in population and extinction biology, chemical reaction networks, and models of social or information diffusion.
 

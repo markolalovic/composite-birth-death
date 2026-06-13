@@ -7,7 +7,9 @@ toc-depth: 1
 
 This page describes how to regenerate the simulated sufficient statistics, estimates, and figures used in the running example.
 
+::: {.meta}
 The repository is available at [github.com/markolalovic/composite-birth-death](https://github.com/markolalovic/composite-birth-death).
+:::
 
 # Overview
 

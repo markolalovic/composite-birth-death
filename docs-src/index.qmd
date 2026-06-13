@@ -7,7 +7,9 @@ toc-depth: 1
 
 This page documents the R source files used for simulations, estimators, covariance calculations, and fixed-point algorithms. 
 
+::: {.meta}
 The repository is available at [github.com/markolalovic/composite-birth-death](https://github.com/markolalovic/composite-birth-death).
+:::
 
 The reproducibility workflow (which script generates which data file and figure) is documented separately in [Reproducibility](workflow/reproducibility.qmd). 
 
