@@ -1,39 +1,30 @@
-/* Improve readability of prose-heavy documentation pages. */
+/* increase width */
 .content {
   max-width: 900px;
 }
 
-/* Slightly more generous paragraph rhythm. */
+/* more generous paragraph spacing */
 main p {
   line-height: 1.62;
 }
 
-/* Optional: justify only ordinary prose paragraphs, not code-adjacent UI. */
+.content {
+  max-width: 900px;
+}
+
 main p {
-  text-align: justify;
-  hyphens: auto;
+  line-height: 1.62;
 }
 
-/* Do not justify meta. */
-.meta,
-.meta p {
-  text-align: left;
-  hyphens: none;
-}
-
-/* Add trailing dots to numbered section labels in the left page TOC. */
+/* trailing dots to numbered section labels in TOC */
 #TOC .header-section-number::after {
   content: ".";
 }
 
-/* Wider, more readable left page TOC. */
+/* wider TOC */
 #quarto-margin-sidebar {
   width: 320px;
 }
-
-/* #TOC {
-  font-size: 5rem;
-} */
 
 #TOC ul {
   padding-left: 0.85rem;

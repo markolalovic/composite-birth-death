@@ -10,9 +10,12 @@ $$
 
 where each observed upward jump is produced by one of several latent mechanisms. When birth events are unmarked, inference must separate the mechanism-specific rates from a single aggregate trajectory. When observations are conditioned on non-extinction, inference must also correct the survival-selection bias caused by the absorbing state.
 
-The documentation of functions and reproducibility workflow is available at:
+Resources:
 
-[markolalovic.github.io/composite-birth-death](https://markolalovic.github.io/composite-birth-death/)
+- [Documentation of functions and reproducibility workflow](https://markolalovic.github.io/composite-birth-death/)
+- [arXiv](https://arxiv.org/abs/2604.20422)
+- [pdf](https://arxiv.org/pdf/2604.20422)
+- [Slides](https://zenodo.org/records/20689342)
 
 
 ## Background
@@ -31,7 +34,7 @@ Beyond epidemic processes, similar issues of latent event types and survival con
 If you find this useful in your work, please cite the corresponding [paper](https://arxiv.org/abs/2604.20422):
 
 ```bibtex
-@misc{lalovic2026likelihoodbasedinferencebirthdeathprocesses,
+@misc{lalovic2026birthdeathprocesses,
       title={Likelihood-based inference for birth-death processes with composite birth mechanisms}, 
       author={Marko Lalovic and Nicos Georgiou and Istvan Z. Kiss},
       year={2026},
